@@ -64,6 +64,14 @@ const generateRandomId = () => {
 app.post('/api/persons', (request, response) => {
     const data = request.body
 
+    if (!(data.name && data.number)){
+        return response.status(400).json({ error: 'name or number are missing' })
+    }
+
+    if (entries.find(entry => entry.name === data.name)){
+        return response.status(400).json({ error: 'name already exists in phonebook' })
+    }
+
     const newEntry = {
         id: generateRandomId(),
         name: data.name,
