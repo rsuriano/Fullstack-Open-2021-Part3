@@ -1,3 +1,4 @@
+const { response } = require('express')
 const express = require('express')
 const app = express()
 
@@ -28,13 +29,23 @@ app.get('/', (request, response) => {
     response.send("<h1>phonebook api</h1>")
 })
 
+app.get('/info', (request, response) => {
+    const resHTML = `<div> Phonebook has info for ${entries.length} people. <br /> ${Date()} </div>`
+    response.send(resHTML)
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(entries)
 })
 
-app.get('/info', (request, response) => {
-    const resHTML = `<div> Phonebook has info for ${entries.length} people. <br /> ${Date()} </div>`
-    response.send(resHTML)
+app.get('/api/persons/:id', (request, response) => {
+    const id = Number(request.params.id)
+    entry = entries.find(entry => entry.id === id)
+    if (entry){
+        response.json(entry)
+    } else{
+        response.status(404).send('The resource was not found')
+    }
 })
 
 const PORT = 3001
