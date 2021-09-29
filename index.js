@@ -1,9 +1,11 @@
 const { response, request } = require('express')
 const express = require('express')
 const morgan = require('morgan')
-const app = express()
+const cors = require('cors')
 
+const app = express()
 app.use(express.json())
+app.use(cors())
 const getBody = (request, response) => {
     return request.method === 'POST' ? JSON.stringify(request.body) : ' '
 }
