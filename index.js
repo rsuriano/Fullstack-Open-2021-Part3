@@ -5,6 +5,7 @@ const cors = require('cors')
 
 const app = express()
 app.use(express.json())
+app.use(express.static('build'))
 app.use(cors())
 const getBody = (request, response) => {
     return request.method === 'POST' ? JSON.stringify(request.body) : ' '
