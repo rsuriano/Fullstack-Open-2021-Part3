@@ -1,9 +1,10 @@
-const { response, request } = require('express')
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-
 const app = express()
+const Entry = require('./models/entry')
+
 app.use(express.json())
 app.use(express.static('build'))
 app.use(cors())
@@ -36,29 +37,32 @@ let entries = [
     }
 ]
 
+// Backend landing page
 app.get('/', (request, response) => {
     response.send("<h1>phonebook api</h1>")
 })
 
+// Backend info
 app.get('/info', (request, response) => {
     const resHTML = `<div> Phonebook has info for ${entries.length} people. <br /> ${Date()} </div>`
     response.send(resHTML)
 })
 
+// Get all entries
 app.get('/api/persons', (request, response) => {
-    response.json(entries)
+    Entry.find({}).then(entries => {
+        response.json(entries)
+    })
 })
 
+// Get entry by id
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    entry = entries.find(entry => entry.id === id)
-    if (entry){
-        response.json(entry)
-    } else{
-        response.status(404).send('The resource was not found')
-    }
+    Entry.findById(request.params.id).then(note => {
+        response.json(note)
+    })
 })
 
+// Delete entry by id
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     entries = entries.filter(entry => entry.id !== id)
@@ -68,8 +72,9 @@ app.delete('/api/persons/:id', (request, response) => {
 
 const generateRandomId = () => {
     return Math.floor(Math.random() * 99999);
-  }  
+}  
 
+// Add entry to the phonebook
 app.post('/api/persons', (request, response) => {
     const data = request.body
 
@@ -91,7 +96,7 @@ app.post('/api/persons', (request, response) => {
 })
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
