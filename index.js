@@ -52,6 +52,7 @@ app.get('/info', (request, response) => {
 app.get('/api/persons', (request, response) => {
     Entry.find({}).then(entries => {
         response.json(entries)
+        mongoose.connection.close()
     })
 })
 
@@ -59,6 +60,7 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     Entry.findById(request.params.id).then(note => {
         response.json(note)
+        mongoose.connection.close()
     })
 })
 
@@ -78,21 +80,23 @@ const generateRandomId = () => {
 app.post('/api/persons', (request, response) => {
     const data = request.body
 
-    if (!(data.name && data.number)){
-        return response.status(400).json({ error: 'name or number are missing' })
-    }
+    // if (!(data.name && data.number)){
+    //     return response.status(400).json({ error: 'name or number are missing' })
+    // }
 
-    if (entries.find(entry => entry.name === data.name)){
-        return response.status(400).json({ error: 'name already exists in phonebook' })
-    }
+    // if (entries.find(entry => entry.name === data.name)){
+    //     return response.status(400).json({ error: 'name already exists in phonebook' })
+    // }
 
-    const newEntry = {
+    const newEntry = new Entry({
         id: generateRandomId(),
         name: data.name,
         number: data.number
-    }
-    entries = entries.concat(newEntry)
-    response.json(newEntry)
+    })
+    newEntry.save().then( result => {
+        response.json(result)
+        mongoose.connection.close()
+    })
 })
 
 
