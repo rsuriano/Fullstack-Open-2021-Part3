@@ -53,23 +53,36 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 // Add entry to the phonebook
 app.post('/api/persons', (request, response) => {
-    const data = request.body
+    const {name, number} = request.body
 
-    // if (!(data.name && data.number)){
-    //     return response.status(400).json({ error: 'name or number are missing' })
-    // }
-
-    // if (entries.find(entry => entry.name === data.name)){
-    //     return response.status(400).json({ error: 'name already exists in phonebook' })
-    // }
+    if (!(name && number)){
+        return response.status(400).json({ error: 'name or number are missing' })
+    }
 
     const newEntry = new Entry({
-        name: data.name,
-        number: data.number
+        name,
+        number,
     })
+
     newEntry.save().then( result => {
         response.json(result)
     })
+})
+
+// Edit entry
+app.put('/api/persons/:id', (request, response, next) => {
+    const {name, number} = request.body
+
+    const newEntry = {
+        name: name,
+        number: number,
+    }
+
+    Entry.findByIdAndUpdate(request.params.id, newEntry, {new: true})
+        .then(updatedEntry => {
+            response.json(updatedEntry)
+        })
+        .catch(error => next(error))
 })
 
 // Error handler middlewares
