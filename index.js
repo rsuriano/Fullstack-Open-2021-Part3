@@ -14,13 +14,12 @@ const getBody = (request, response) => {
 morgan.token('body', getBody)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let entries = []
-
-// // Backend info
-// app.get('/info', (request, response) => {
-//     const resHTML = `<div> Phonebook has info for ${entries.length} people. <br /> ${Date()} </div>`
-//     response.send(resHTML)
-// })
+// Backend info
+app.get('/info', (request, response) => {
+    Entry.find({}).then(entries => {
+        response.send(`<div> Phonebook has info for ${entries.length} people. <br /> ${Date()} </div>`)
+    })
+})
 
 // Get all entries
 app.get('/api/persons', (request, response) => {
