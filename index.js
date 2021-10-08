@@ -30,7 +30,7 @@ app.get('/api/persons', (request, response) => {
 })
 
 // Get entry by id
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Entry.findById(request.params.id)
         .then(entry => {
             if (entry) {
