@@ -16,11 +16,15 @@ mongoose.connect(url)
 const entrySchema = new mongoose.Schema({
     name: {
         type: String,
+        minLength: 3,
+        required: true,
         unique: true,
     },
     number: {
         type: String,
-        unique: true
+        minLength: 8,
+        required: true,
+        unique: true,
     },
 })
 
